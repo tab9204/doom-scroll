@@ -5,13 +5,7 @@
       {
         "src": "/jake.png",
         "type": "image/png",
-        "sizes": "192x192",
-        "purpose": "any"
-      },
-      {
-        "src": "/jake.png",
-        "type": "image/png",
-        "sizes": "512x512",
+        "sizes": "32x32",
         "purpose": "any"
       }
     ],
