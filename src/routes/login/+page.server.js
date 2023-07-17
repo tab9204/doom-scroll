@@ -1,4 +1,4 @@
-import {REDIRECT_URI} from '$env/static/private';
+import {CLIENT_ID, REDIRECT_URI} from '$env/static/private';
 
 export const load = async({cookies})=>{
    //generate a random reddit state string
@@ -8,6 +8,7 @@ export const load = async({cookies})=>{
 
    return { 
     redditState: redditState,
+    client: CLIENT_ID,
     redirect: REDIRECT_URI
    }
 }
