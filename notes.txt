@@ -30,7 +30,6 @@ find a way to display posts that have no post hint
 
 Before going to prod: 
 
-Oauth redirect link needs to be updated 
 http cookies should be set to secure = true
 
 

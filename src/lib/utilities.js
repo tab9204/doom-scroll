@@ -28,8 +28,3 @@ export const retry = async (callback, attemps = 0)=>{
         }
     }
 }
-
-
-export const lazyLoad = ()=>{
-    
-}

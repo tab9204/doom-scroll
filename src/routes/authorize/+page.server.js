@@ -1,5 +1,6 @@
-import { redirect } from '@sveltejs/kit';
-import { CLIENT_SECRET, CLIENT_ID, REDIRECT_URI} from '$env/static/private';
+import {redirect} from '@sveltejs/kit';
+import {CLIENT_SECRET, CLIENT_ID, REDIRECT_URI} from '$env/static/private';
+import {environment, cookieSecure} from "$lib/config.server.js";
 
 export const load = async({cookies,url})=>{
     const redditState = cookies.get('redditState');
@@ -27,7 +28,7 @@ export const load = async({cookies,url})=>{
         });
         const respData = await resp.json();
         //save the refresh token in a cookie
-        cookies.set('refresh', respData.refresh_token, {secure:false, path: '/', maxAge:  7776000});
+        cookies.set('refresh', respData.refresh_token, {secure:cookieSecure[environment], path: '/', maxAge:  7776000});
         throw redirect(303,"/");
 
     }

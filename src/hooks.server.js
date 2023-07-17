@@ -1,4 +1,5 @@
 import { CLIENT_SECRET, CLIENT_ID} from '$env/static/private';
+import {environment, cookieSecure} from "$lib/config.server.js";
 
 export const handle = async ({event,resolve}) =>{
     //refresh for the oauth token  
@@ -17,7 +18,7 @@ export const handle = async ({event,resolve}) =>{
                 const token = await get_new_token(refresh,CLIENT_ID,CLIENT_SECRET);
                 console.log("New token");
                 //store the token as a cookie. maxAge is when the token would expire 
-                event.cookies.set('token', token, {secure:false, sameSite: 'lax', path: '/', maxAge:  3600});
+                event.cookies.set('token', token, {secure:cookieSecure[environment], path: '/', maxAge:  3600});
             }
         }
         //we dont want the user going back to the login or authorize pages if they are already logged in

@@ -1,6 +1,6 @@
 import {files} from '$service-worker';
 
-var cacheName = 'offlineCache-v2';
+var cacheName = 'offlineCache-v0';
 
 var contentToCache = [
     ...files

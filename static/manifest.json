@@ -4,13 +4,13 @@
     "icons": [
       {
         "src": "/jake.png",
-        "type": "image/svg+xml",
+        "type": "image/png",
         "sizes": "192x192",
         "purpose": "any"
       },
       {
         "src": "/jake.png",
-        "type": "image/svg+xml",
+        "type": "image/png",
         "sizes": "512x512",
         "purpose": "any"
       }
