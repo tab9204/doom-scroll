@@ -1,0 +1,40 @@
+after: returned by first api call
+count: var to hold the number of posts already viewed 
+subreddit: name of the sub the post is in
+title: title of the post
+
+
+
+Types of posts
+
+Posts may or may not have post_hints based on the settings of the subreddit. If no post hint is available will need a way to
+determine what kind of post is being shown.
+Types of post hints:
+  -link (Just a link to another page)
+  -image (Just and image)
+  -hosted:video (Reddit video)
+  -rich:video (External video likely youtube)
+  -self (Basically a text post)
+
+
+If the post_hint is undefined then we will need to check each individual content type to figure out what kind of post it is
+
+
+TODO:
+
+
+Add an image gallery option for posts with multiple images 
+parse image links in text comments and display them as an image istead of a link
+find a way to display posts that have no post hint
+
+
+Before going to prod: 
+
+Oauth redirect link needs to be updated 
+http cookies should be set to secure = true
+
+
+
+
+
+
