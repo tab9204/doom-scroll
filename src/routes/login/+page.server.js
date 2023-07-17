@@ -1,3 +1,5 @@
+import {REDIRECT_URI} from '$env/static/private';
+
 export const load = async({cookies})=>{
    //generate a random reddit state string
    const redditState = Date.now() + Math.floor(Math.random() * (100 - 1 + 1) + 1);
@@ -5,6 +7,7 @@ export const load = async({cookies})=>{
    cookies.set('redditState', redditState, {secure:false, path: '/' });
 
    return { 
-    redditState: redditState
+    redditState: redditState,
+    redirect: REDIRECT_URI
    }
 }

@@ -1,7 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { CLIENT_SECRET, CLIENT_ID} from '$env/static/private';
-
-const redirectURI = "http://192.168.0.236:5173/authorize";
+import { CLIENT_SECRET, CLIENT_ID, REDIRECT_URI} from '$env/static/private';
 
 export const load = async({cookies,url})=>{
     const redditState = cookies.get('redditState');
@@ -15,7 +13,7 @@ export const load = async({cookies,url})=>{
         var form = new FormData();
         form.append('code', code)
         form.append('grant_type', "authorization_code");
-        form.append('redirect_uri', redirectURI);
+        form.append('redirect_uri', REDIRECT_URI);
 
         //make a post request for the bearer and refresh token 
         const resp = await fetch("https://www.reddit.com/api/v1/access_token",{
