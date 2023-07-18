@@ -7,6 +7,12 @@
         "type": "image/png",
         "sizes": "32x32",
         "purpose": "any"
+      },
+      {
+        "src": "/jake-large.png",
+        "type": "image/png",
+        "sizes": "144x144",
+        "purpose": "any"
       }
     ],
     "background_color": "#00BA00",
