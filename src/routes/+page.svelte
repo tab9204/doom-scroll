@@ -3,7 +3,7 @@
     import {Drawer, drawerStore} from '@skeletonlabs/skeleton';
     import {beforeNavigate, afterNavigate} from '$app/navigation';
     import {retry} from "$lib/utilities.js";
-    import {redditPosts, frontPageScroll, after, count, limit, sortPostsBy} from "$lib/stores.js";
+    import {redditPosts, frontPageScroll, after, before, count, limit, sortPostsBy} from "$lib/stores.js";
     import Post from "$lib/components/Post.svelte";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
 
@@ -18,7 +18,7 @@
     const getPosts = async ()=>{
         const resp = await fetch("/api/get_user_posts",{
             method: 'POST',
-            body: JSON.stringify({after:$after,count:$count,limit:$limit,sort:$sortPostsBy}),
+            body: JSON.stringify({after:$after,before:$before,count:$count,limit:$limit,sort:$sortPostsBy}),
             headers: {'content-type': 'application/json'}
         });
 		const data = await resp.json();
@@ -30,7 +30,9 @@
         else{
             //increment count and update after 
             //next time we get posts we want the next page of posts 
+            before.set(data.after);
             after.set(data.after);
+            //before.set(data.before);
             count.update(n => n + $limit);
             redditPosts.set($redditPosts.concat(data.posts));
             post_list = $redditPosts;
@@ -43,7 +45,7 @@
         let observer = new IntersectionObserver((entries)=>{
             if (entries[0].isIntersecting && !node.classList.contains("seen")) {
                 node.classList.add("seen");
-                retry(getPosts);
+                getPosts();
             }
         }, options);
         observer.observe(node);
@@ -57,6 +59,9 @@
 
     const setSort = (filter)=>{
 		sortPostsBy.set(filter);
+        after.set(null);
+        before.set(null);
+        count.set(0);
 		redditPosts.set([]);
         drawerStore.close();
 	}
@@ -68,9 +73,9 @@
 
 <Drawer position="top" width="w-full" height="h-fit" zIndex="z-[1]" class="top-14" bgDrawer="variant-filled-surface">
     <div class="flex justify-center gap-10 p-4">
-        <button on:click={()=>{setSort("hot")}} type="button" class="btn variant-{$sortPostsBy == "hot" ? 'filled' : 'ringed' }-secondary">Hot</button>
-        <button on:click={()=>{setSort("best")}}  type="button" class="btn variant-{$sortPostsBy == "best" ? 'filled' : 'ringed' }-secondary">Best</button>
-        <button on:click={()=>{setSort("new")}} type="button" class="btn variant-{$sortPostsBy == "new" ? 'filled' : 'ringed' }-secondary">New</button>
+        <button on:click={()=>{setSort("hot")}} type="button" class="btn variant-{$sortPostsBy == "hot" ? 'filled' : 'ringed' }-secondary focus:outline-none">Hot</button>
+        <button on:click={()=>{setSort("best")}}  type="button" class="btn variant-{$sortPostsBy == "best" ? 'filled' : 'ringed' }-secondary focus:outline-none">Best</button>
+        <button on:click={()=>{setSort("new")}} type="button" class="btn variant-{$sortPostsBy == "new" ? 'filled' : 'ringed' }-secondary focus:outline-none">New</button>
     </div>
 </Drawer>
 {#await post_list}
@@ -81,7 +86,7 @@
             <Post {post}></Post>
         {/if}
         <!--Intersection observer to load more posts as the user scrolls-->
-        {#if i == post_list.length / 2}
+        {#if i == Math.floor(post_list.length * .75)}
             <span use:watchPostScroll></span>
         {/if}
     {/each}

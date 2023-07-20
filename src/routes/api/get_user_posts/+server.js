@@ -1,5 +1,6 @@
 import {error} from '@sveltejs/kit';
 import {json} from '@sveltejs/kit';
+import {environment, cookieSecure} from "$lib/config.server.js";
 
 
 
@@ -7,16 +8,21 @@ export const POST = async ({request,cookies})=>{
     const query = await request.json();
     try{
         //get the oauth token
-        const  token = cookies.get('token');
+        const token = cookies.get('token');
+        //configure which page of posts should be shown 
+        const page = query.after ? query.after : cookies.get('before');
         //use the new token to get the user's frontpage 
-        const posts = await get_front_page(token,query.after,query.count,query.limit,query.sort);
+        const posts = await get_front_page(token,page,query.count,query.limit,query.sort);
        // const posts = await get_test_data();
-
+        if(query.count > 0 && query.count % (query.limit * 2) == 0){
+            cookies.set('before', query.before, {secure:cookieSecure[environment], path: '/', maxAge:  57600});
+        }
 
         let data = {
             raw: posts.raw,//just for testing
             types:[],//just for testing
             after: posts.after,
+            before: posts.before,
             posts: []
         }
 
@@ -49,7 +55,9 @@ export const POST = async ({request,cookies})=>{
 
 //uses an auth token to return posts on a users front page 
 const get_front_page = async(token,after,count,limit,sort)=>{
-    const resp = await fetch(`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}&count=${count}`,{
+    //count causing duplicate posts I think 
+    //`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}&count=${count}`
+    const resp = await fetch(`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}`,{
         method: 'GET',
         headers: new Headers({
             "Authorization": `bearer ${token}`,
@@ -59,6 +67,7 @@ const get_front_page = async(token,after,count,limit,sort)=>{
     const front_page = await resp.json();
     const posts = {
         after: front_page.data.after,
+        before: front_page.data.before,
         all: front_page.data.children,
         raw: front_page//for testing
     }
