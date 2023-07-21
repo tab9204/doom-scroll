@@ -3,7 +3,7 @@
     import {Drawer, drawerStore} from '@skeletonlabs/skeleton';
     import {beforeNavigate, afterNavigate} from '$app/navigation';
     import {retry} from "$lib/utilities.js";
-    import {redditPosts, frontPageScroll, after, before, count, limit, sortPostsBy} from "$lib/stores.js";
+    import {redditPosts, frontPageScroll, after, limit, sortPostsBy} from "$lib/stores.js";
     import Post from "$lib/components/Post.svelte";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
 
@@ -18,7 +18,7 @@
     const getPosts = async ()=>{
         const resp = await fetch("/api/get_user_posts",{
             method: 'POST',
-            body: JSON.stringify({after:$after,before:$before,count:$count,limit:$limit,sort:$sortPostsBy}),
+            body: JSON.stringify({after:$after,count:$redditPosts.length,limit:$limit,sort:$sortPostsBy}),
             headers: {'content-type': 'application/json'}
         });
 		const data = await resp.json();
@@ -28,12 +28,9 @@
             throw new error (400,'Could not get Posts');
         }
         else{
-            //increment count and update after 
+            //increment count
             //next time we get posts we want the next page of posts 
-            before.set(data.after);
             after.set(data.after);
-            //before.set(data.before);
-            count.update(n => n + $limit);
             redditPosts.set($redditPosts.concat(data.posts));
             post_list = $redditPosts;
             return $redditPosts;
@@ -60,8 +57,6 @@
     const setSort = (filter)=>{
 		sortPostsBy.set(filter);
         after.set(null);
-        before.set(null);
-        count.set(0);
 		redditPosts.set([]);
         drawerStore.close();
 	}
@@ -90,7 +85,7 @@
             <span use:watchPostScroll></span>
         {/if}
     {/each}
-    <span use:watchPostScroll></span>
+    <!--<span use:watchPostScroll></span>-->
 {:catch error}
     <p>Could not load posts</p>
 {/await}

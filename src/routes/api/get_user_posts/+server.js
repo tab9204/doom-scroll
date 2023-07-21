@@ -5,17 +5,17 @@ import {environment, cookieSecure} from "$lib/config.server.js";
 
 
 export const POST = async ({request,cookies})=>{
-    const query = await request.json();
+    const req = await request.json();
     try{
         //get the oauth token
         const token = cookies.get('token');
         //configure which page of posts should be shown 
-        const page = query.after ? query.after : cookies.get('before');
+        const after = !req.after ? cookies.get('before') : req.after;
         //use the new token to get the user's frontpage 
-        const posts = await get_front_page(token,page,query.count,query.limit,query.sort);
-       // const posts = await get_test_data();
-        if(query.count > 0 && query.count % (query.limit * 2) == 0){
-            cookies.set('before', query.before, {secure:cookieSecure[environment], path: '/', maxAge:  57600});
+        const posts = await get_front_page(token,after,req.count,req.limit,req.sort);
+        //const posts = await get_test_data();
+        if(req.count > 0 && req.count % (req.limit * 2) == 0){
+            cookies.set('before', posts.before, {secure:cookieSecure[environment], path: '/', maxAge:  57600});
         }
 
         let data = {
@@ -32,7 +32,7 @@ export const POST = async ({request,cookies})=>{
                 subreddit: post.data.subreddit,
                 title: post.data.title,
                 post_type: post.data?.post_hint ? post.data.post_hint : false,
-                images: post.data?.post_hint == "image" ? extract_image_data(post) : [],
+                images: post.data?.media_metadata || post.data?.preview ? extract_image_data(post) : [],
                 link: post.data.url,
                 text: post.data?.selftext_html ? post.data.selftext_html : false,
                 video: post.data?.secure_media?.reddit_video ? extract_video_data(post.data.secure_media.reddit_video) : false,
@@ -57,7 +57,7 @@ export const POST = async ({request,cookies})=>{
 const get_front_page = async(token,after,count,limit,sort)=>{
     //count causing duplicate posts I think 
     //`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}&count=${count}`
-    const resp = await fetch(`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}`,{
+    const resp = await fetch(`https://oauth.reddit.com/${sort}/.json?limit=${limit}&after=${after}&count=${count}`,{
         method: 'GET',
         headers: new Headers({
             "Authorization": `bearer ${token}`,
@@ -91,12 +91,13 @@ const extract_image_data = (post)=>{
                 images.push({src:media_url,width:x,height:y});
             }
             catch(e){
+                console.log(e)
                 //just skip the image if we encountered an error 
                 continue;
             }
         }
     }
-    else if(post.data?.preview){
+    else if(post.data?.preview && post.data?.post_hint == "image" ){
         const media_url = post.data.url;
         const x = post.data?.preview?.images[0]?.source?.width;
         const y = post.data?.preview?.images[0]?.source?.height;

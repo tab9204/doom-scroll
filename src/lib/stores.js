@@ -1,12 +1,9 @@
 import {writable} from 'svelte/store';
-import { browser } from "$app/environment"
-
-export const after = writable(null);
-export const before = writable(null);
-export const count = writable(0);
-export const limit = writable(20);
+import {browser} from "$app/environment"
 
 export const redditPosts = writable([]);
+export const after = writable(null);
+export const limit = writable(20);
 
 export const sortPostsBy = writable(browser && localStorage.getItem("sort") || "hot")
 sortPostsBy.subscribe((val) => {
