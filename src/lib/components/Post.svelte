@@ -5,7 +5,7 @@
     import Link_Content from "$lib/components/Link_Content.svelte";
     import Video_Content from "$lib/components/Video_Content.svelte";
     import Embedded_Content from "$lib/components/Embedded_Content.svelte";
-    import Generic_content from  "$lib/components/Generic_content.svelte";
+    import Generic_Content from  "$lib/components/Generic_Content.svelte";
 
 
     export let post;
