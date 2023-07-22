@@ -10,20 +10,20 @@ export const POST = async ({request,cookies})=>{
         //get the oauth token
         const token = cookies.get('token');
         //configure which page of posts should be shown 
-        const after = !req.after ? cookies.get('before') : req.after;
+        const after = !req.after ? cookies.get('after') : "t3_"+req.after;
         //use the new token to get the user's frontpage 
         const posts = await get_front_page(token,after,req.count,req.limit,req.sort);
         //const posts = await get_test_data();
-        if(req.count > 0 && req.count % (req.limit * 2) == 0){
-            cookies.set('before', posts.before, {secure:cookieSecure[environment], path: '/', maxAge:  57600});
+        if(req.count > 0){
+            cookies.set('after', posts.after, {secure:cookieSecure[environment], path: '/', maxAge:  28800});
         }
 
         let data = {
             raw: posts.raw,//just for testing
-            types:[],//just for testing
+            types:[],
             after: posts.after,
-            before: posts.before,
-            posts: []
+            posts: [],
+            post_ids: []
         }
 
         posts.all.forEach(post => {
@@ -42,6 +42,7 @@ export const POST = async ({request,cookies})=>{
             }
             data.posts.push(post_data);
             data.types.push(post_data.post_type);
+            data.post_ids.push(post_data.id);
         });
         return json(data);
     }
