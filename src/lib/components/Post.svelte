@@ -28,7 +28,7 @@
         {:else if post.post_type == "rich:video"}
             <Embedded_Content content={post.embed}></Embedded_Content>
         {:else if !post.post_type}
-            <Generic_content post={post}></Generic_content>
+            <Generic_Content post={post}></Generic_Content>
         {/if}
         {#if post.text}
             <Text_Content text={post.text}></Text_Content>
