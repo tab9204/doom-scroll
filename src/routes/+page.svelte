@@ -1,47 +1,62 @@
 <script>
     import {error} from '@sveltejs/kit';
     import {Drawer, drawerStore} from '@skeletonlabs/skeleton';
-    import {beforeNavigate, afterNavigate} from '$app/navigation';
-    import {posts, limit, sort, pageScroll} from "$lib/stores.js";
+    import {afterNavigate} from '$app/navigation';
+    import {frontPage, seen, maxLength, limit, sort, pageScroll} from "$lib/stores.js";
+    import {onDestroy} from "svelte";
     import Post from "$lib/components/Post.svelte";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
 
 
-    //save the scroll position so the page does not reset
     afterNavigate(()=>{
-        document.getElementById("page").scroll(0,$pageScroll);
-    })
-    beforeNavigate(()=>{
-        pageScroll.set(document.getElementById("page").scrollTop);
+        //restore the users scroll position
+        if($pageScroll){
+            document.getElementById($pageScroll).scrollIntoView();
+        }
+    });
+
+    onDestroy(()=>{
+        //if the total # of posts gets too large it slows down page navigation
+        if($frontPage.length > $maxLength){
+            $frontPage.splice(0,$frontPage.length - $maxLength);
+        }
     });
 
     const getPosts = async ()=>{
         const resp = await fetch("/api/get_user_posts",{
             method: 'POST',
-            body: JSON.stringify({after:$posts[$posts.length - 1]?.id,count:$posts.length,limit:$limit,sort:$sort}),
+            body: JSON.stringify({
+                after:$frontPage[$frontPage.length - 1]?.id,
+                ids: $seen,
+                count:$frontPage.length,
+                limit:$limit,
+                sort:$sort
+            }),
             headers: {'content-type': 'application/json'}
         });
 		const data = await resp.json();
-        console.log(data);
         const err = data.message;
         if(err){
             throw new error (400,'Could not get Posts');
         }
         else{
-            //increment count
-            //next time we get posts we want the next page of posts 
-            posts.set($posts.concat(data.posts));
-            post_list = $posts;
-            console.log($posts.length);
-            return $posts;
+            frontPage.set($frontPage.concat(data.posts))
+            return $frontPage;
         }
     }
 
-    const watchPostScroll = (node)=>{
+
+    const watchScroll = (node)=>{
         let options = {root: null,rootMargin: "0px",threshold: 0}
         let observer = new IntersectionObserver((entries)=>{
             if (entries[0].isIntersecting && !node.classList.contains("seen")) {
-                node.classList.add("seen");
+                node.classList.add("seen"); 
+                //add the last batch of post ids to seen array
+                //ids in the array won't be shown again
+                let viewed = [];
+                $frontPage.slice(-$limit).forEach((post)=>{viewed.push(post.id);})
+                seen.set($seen.concat(viewed));
+                //load more posts
                 getPosts();
             }
         }, options);
@@ -56,14 +71,13 @@
 
     const setSort = (filter)=>{
 		sort.set(filter);
-		posts.set([]);
+		frontPage.set([]);
         drawerStore.close();
 	}
 
-    $: post_list = $posts.length <= 0 ? getPosts() : $posts;
+    $: post_list = $frontPage.length <= 0 ? getPosts() : $frontPage;
 
 </script>
-
 
 <Drawer position="top" width="w-full" height="h-fit" zIndex="z-[1]" class="top-14" bgDrawer="variant-filled-surface">
     <div class="flex justify-center gap-10 p-4">
@@ -74,15 +88,15 @@
 </Drawer>
 {#await post_list}
     <Loading_Icon></Loading_Icon>
-{:then $posts}
-    {#each $posts as post, i}
+{:then posts}
+    {#each posts as post, i}
         <Post {post}></Post>
         <!--Intersection observer to load more posts as the user scrolls-->
         {#if i == Math.floor(post_list.length * .75)}
-            <span use:watchPostScroll></span>
+            <span use:watchScroll></span>
         {/if}
     {/each}
-    <!--<span use:watchPostScroll></span>-->
+    <!--<span use:watchScroll></span>-->
 {:catch error}
     <p>Could not load posts</p>
 {/await}

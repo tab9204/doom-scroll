@@ -1,11 +1,11 @@
 <script>
     import {decodeHTML} from "$lib/utilities.js";
-    import Text_Content from "$lib/components/Text_Content.svelte";
-    import Image_Content from "$lib/components/Image_Content.svelte";
-    import Link_Content from "$lib/components/Link_Content.svelte";
-    import Video_Content from "$lib/components/Video_Content.svelte";
-    import Embedded_Content from "$lib/components/Embedded_Content.svelte";
-    import Generic_Content from  "$lib/components/Generic_Content.svelte";
+    import Text_Content from "$lib/components/content_types/Text_Content.svelte";
+    import Image_Content from "$lib/components/content_types/Image_Content.svelte";
+    import Link_Content from "$lib/components/content_types/Link_Content.svelte";
+    import Video_Content from "$lib/components/content_types/Video_Content.svelte";
+    import Embedded_Content from "$lib/components/content_types/Embedded_Content.svelte";
+    import Generic_Content from  "$lib/components/content_types/Generic_Content.svelte";
 
 
     export let post;
@@ -18,7 +18,7 @@
         <div class="text-sm">r/{post.subreddit}</div>
         <h3 class="text-lg">{@html decodeHTML(post.title)}</h3>
     </div>
-    <div class="variant-filled-secondary rounded p-2 overflow-hidden relative empty:p-0">
+    <div class="variant-filled-secondary rounded p-2 overflow-hidden relative empty:hidden">
         {#if post.post_type == "image"}
             <Image_Content images={post.images}></Image_Content>
         {:else if post.post_type == "link"}

@@ -1,12 +1,18 @@
 <script>
     import {error} from '@sveltejs/kit';
-    import { page } from '$app/stores'
+    import {page} from '$app/stores'
+    import {onMount} from "svelte";
+    import {pageScroll} from "$lib/stores.js";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
     import Comment from "$lib/components/Comment.svelte";
 
 
     const post_id = $page.url.searchParams.get('id');
-
+    
+    //save this post as the spot to scroll to
+    onMount(()=>{
+        pageScroll.set(post_id);
+    })
 
     const getComments = async(id)=>{
         const resp = await fetch("/api/get_post_comments",{

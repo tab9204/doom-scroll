@@ -1,7 +1,7 @@
 <script>
-    import Image_Content from "$lib/components/Image_Content.svelte";
-    import Video_Content from "$lib/components/Video_Content.svelte";
-    import Embedded_Content from "$lib/components/Embedded_Content.svelte";
+    import Image_Content from "$lib/components/content_types/Image_Content.svelte";
+    import Video_Content from "$lib/components/content_types/Video_Content.svelte";
+    import Embedded_Content from "$lib/components/content_types/Embedded_Content.svelte";
 
     export let post;
 </script>
