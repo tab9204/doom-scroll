@@ -21,7 +21,9 @@
         observer.observe(wrapper);
         return {
             destroy() {
-                embed.removeEventListener('load', loaded);  
+                embed.removeEventListener('load', loaded);
+                observer.unobserve(wrapper);
+                
             }
         }
 

@@ -5,9 +5,19 @@ export const frontPage = writable([]);
 export const limit = writable(20);
 export const maxLength = writable(100);
 
-export const seen = writable(browser && JSON.parse(sessionStorage.getItem("seen")) || []);
+export const seen = writable(browser && JSON.parse(localStorage.getItem("seen")) || []);
 seen.subscribe((val) => {
-  if (browser) return (sessionStorage.setItem("seen", JSON.stringify(val)))
+  try{
+    if (browser) return (localStorage.setItem("seen", JSON.stringify(val)))
+  }
+  catch(e){
+    if(e == "QuotaExceededError"){
+      if(browser){
+        localStorage.removeItem("seen");
+        return [];
+      }
+    }
+  }
 })
 
 export const sort = writable(browser && localStorage.getItem("sort") || "hot")

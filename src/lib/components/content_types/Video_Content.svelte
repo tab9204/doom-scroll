@@ -25,6 +25,7 @@
         return {
             destroy() {
               // player.dispose();
+              observer.unobserve(wrapper);
             }
         }
     }
