@@ -64,7 +64,7 @@
 
         const manager = new Hammer.Manager(image,{
             recognizers: [
-                [Hammer.Press, {time: 500}]
+                [Hammer.Tap, {taps: 2}]
             ]  
         });
 
@@ -72,11 +72,11 @@
             window.open(images[selected].src, "_blank");
         }
 
-        manager.on("press",expand);
+        manager.on("tap",expand);
 
         return {
             destroy() {
-                Hammer(manager).off("press");
+                Hammer(manager).off("tap");
             }
         };
     }
@@ -92,7 +92,7 @@
         const manager = new Hammer.Manager(node,{
             recognizers: [
                 [Hammer.Swipe, {direction: Hammer.DIRECTION_HORIZONTAL}],
-                [Hammer.Press, {time: 500}]
+                [Hammer.Tap, {taps: 2}]
             ]  
         });
 
@@ -112,7 +112,7 @@
 
         manager.on("swiperight", prev);
 
-        manager.on("press",expand);
+        manager.on("tap",expand);
 
         back.addEventListener("click", prev);
 
@@ -124,7 +124,7 @@
                 forward.removeEventListener('click', next);
                 Hammer(manager).off("swipeleft");
                 Hammer(manager).off("swiperight");
-                Hammer(manager).off("press");
+                Hammer(manager).off("tap");
             }
         };
     }
@@ -157,6 +157,6 @@
     <div class="relative max-w-full max-h-96" use:lazyLoadImage={images[0].src} use:addEvents>
         <Placeholder width={images[0].width} height={images[0].height}></Placeholder>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <img class="relative left-2/4 -translate-x-2/4 max-w-full max-h-96 opacity-0 object-contain ease-linear duration-200" alt="The content of an image post" style="width:{images[0].width}px; height:{images[0].height}px;">
+        <img class="relative left-2/4 -translate-x-2/4 max-w-full max-h-96 opacity-0 object-contain ease-linear duration-500" alt="The content of an image post" style="width:{images[0].width}px; height:{images[0].height}px;">
     </div>
 {/if}
