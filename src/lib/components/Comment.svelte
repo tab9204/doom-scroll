@@ -6,7 +6,6 @@
     
 </script>
 
-<!--Todo: The final comment in a chain is showing as undefined-->
 <div class="m-2 border-l border-tertiary-500">
     <div class="ml-1">
         <div class="font-semibold text-xs">u/{user}</div>

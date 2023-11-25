@@ -8,24 +8,31 @@
 
     let options = {root: null,rootMargin: "0px",threshold: 0};
 
+    let player = null;
+
     const lazyLoadVideo = (wrapper)=>{
         const loaded = (player)=>{
             player.style.opacity = "1";
-            observer.unobserve(wrapper);
+            //observer.unobserve(wrapper);
         }
         let observer = new IntersectionObserver((entries)=>{
             if (entries[0].isIntersecting) {
-                const player = videojs(videoId, {preload: "auto", controls:true, nativeControlsForTouch:true, width:video.width, height:video.height});
-                player.ready(()=> {
-                    loaded(player.el_);
-                });
+                if(player == null){
+                    player = videojs(videoId, {preload: "auto", controls:true, nativeControlsForTouch:true, width:video.width, height:video.height});
+                    player.ready(()=> {
+                        loaded(player.el_);
+                    });
+                }
+            }
+            else if (!entries[0].isIntersecting && player != null){
+                player.pause();
             }
         }, options);
         observer.observe(wrapper);
         return {
             destroy() {
-              // player.dispose();
-              observer.unobserve(wrapper);
+                //player.dispose();
+                observer.unobserve(wrapper);
             }
         }
     }

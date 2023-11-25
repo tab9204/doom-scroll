@@ -2,7 +2,7 @@ import { CLIENT_SECRET, CLIENT_ID} from '$env/static/private';
 import {environment, cookieSecure} from "$lib/config.server.js";
 
 export const handle = async ({event,resolve}) =>{
-    //refresh for the oauth token  
+    //oauth token refresh 
     const refresh = event.cookies.get("refresh");
 
     //no refresh so user needs to log in

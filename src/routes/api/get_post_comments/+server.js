@@ -1,5 +1,6 @@
 import {error} from '@sveltejs/kit';
 import {json} from '@sveltejs/kit';
+import {extract_image_data, extract_video_data, extract_embed_data} from "$lib/utilities.server.js";
 
 
 export const POST = async ({request,cookies})=>{
@@ -13,14 +14,30 @@ export const POST = async ({request,cookies})=>{
         })
     });
 
-    const data = await resp.json();
-    const comments = data[1].data.children;
+    const post = await resp.json();
+    
+    const comments = post[1].data.children;
+    const content = post[0].data.children[0];
+    //return both the content and comments of the post
+    let data = [
+        //post content data object
+        {
+            title: content.data.title,
+            post_type: content.data?.post_hint ? content.data.post_hint : false,
+            images: content.data?.media_metadata || content.data?.preview ? extract_image_data(content,req.screen.width,req.screen.height) : [],
+            link: content.data.url,
+            text: content.data?.selftext_html ? content.data.selftext_html : false,
+            video: content.data?.secure_media?.reddit_video ? extract_video_data(content.data.secure_media.reddit_video) : false,
+            embed: content.data?.secure_media_embed?.media_domain_url ? extract_embed_data(content.data.secure_media_embed) : false,
+        },
+        //post comment array
+        []
+    ]
 
-    let just_the_comments = [];
     comments.forEach((comment)=>{
-        extract_comments(comment,just_the_comments);
+        extract_comments(comment,data[1]);
     })
-    return json(just_the_comments);
+    return json(data);
     }
     catch(err){
         console.log(err);

@@ -23,10 +23,10 @@
 				}}>
 					<svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M120-240v-66.666h720V-240H120Zm0-206.667v-66.666h720v66.666H120Zm0-206.667V-720h720v66.666H120Z"/></svg>
 				</div>
-			{:else if $page.url.pathname.includes("/comments")}
-				<a href="/" data-sveltekit-noscroll>
-					<svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M560.667-240 320-480.667l240.667-240.666L608-674 414.666-480.667 608-287.333 560.667-240Z"/></svg>
-				</a>
+			{:else if $page.url.pathname.includes("/comments") || $page.url.pathname.includes("/r")}
+			<div on:click={()=>{history.back();}} data-sveltekit-noscroll>
+				<svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M560.667-240 320-480.667l240.667-240.666L608-674 414.666-480.667 608-287.333 560.667-240Z"/></svg>
+			</div>
 			{/if}
 		</AppBar>
 	</svelte:fragment>

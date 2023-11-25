@@ -1,17 +1,24 @@
 <script>
     import {decodeHTML} from "$lib/utilities.js";
+
     export let text;
+    export let forceExpand = false;
 
     let overflowing = false;
     let fullHeight = 0;
     let collapsed = true;
 
     const checkOverflow = (node)=>{
-        const container = node.offsetHeight;
-        const overflow =  node.children[0].offsetHeight;
-        if(overflow > container){
-            overflowing = true;
-            fullHeight = 'max-h-['+overflow+'px]';
+        if(!forceExpand){
+            const container = node.offsetHeight;
+            const overflow =  node.children[0].offsetHeight;
+            if(overflow > container){
+                overflowing = true;
+                fullHeight = 'max-h-['+overflow+'px]';
+            }
+        }
+        else{
+            collapsed = false;
         }
     }
 

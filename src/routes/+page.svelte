@@ -1,14 +1,21 @@
 <script>
+    import {decodeHTML} from "$lib/utilities.js";
     import {error} from '@sveltejs/kit';
     import {Drawer, drawerStore} from '@skeletonlabs/skeleton';
-    import {afterNavigate} from '$app/navigation';
-    import {frontPage, seen, maxLength, limit, sort, pageScroll} from "$lib/stores.js";
-    import {onDestroy} from "svelte";
+    import {afterNavigate, beforeNavigate} from '$app/navigation';
+    import {frontPage, seen, maxLength, limit, sort, pageScroll, subPosts, subPageScroll} from "$lib/stores.js";
+    import {onDestroy, onMount} from "svelte";
     import Post from "$lib/components/Post.svelte";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
 
+    beforeNavigate((nav)=>{
+        if(nav.to?.route.id == "/comments" || nav.to?.route.id == "/r/[slug]"){
+            //save the scroll position 
+            pageScroll.set(nav.to.url.searchParams.get("id"));
+        }
+    })
 
-    afterNavigate(()=>{
+    afterNavigate((nav)=>{
         //restore the users scroll position
         if($pageScroll){
             document.getElementById($pageScroll).scrollIntoView();
@@ -22,6 +29,14 @@
         }
     });
 
+    onMount(()=>{
+        //set the subreddit post array and the subreddit scroll position to their default value 
+        subPosts.set([]);
+        subPageScroll.set(null);
+    })
+
+    //get_user_posts
+    //get_test_posts
     const getPosts = async ()=>{
         const resp = await fetch("/api/get_user_posts",{
             method: 'POST',
@@ -30,7 +45,8 @@
                 ids: $seen,
                 count:$frontPage.length,
                 limit:$limit,
-                sort:$sort
+                sort:$sort,
+                screen: {width: window.innerWidth, height: window.innerHeight > 384 ? 384 : window.innerHeight}
             }),
             headers: {'content-type': 'application/json'}
         });
@@ -40,6 +56,7 @@
             throw new error (400,'Could not get Posts');
         }
         else{
+            console.log(data);
             frontPage.set($frontPage.concat(data.posts))
             return $frontPage;
         }
@@ -77,7 +94,9 @@
 
     $: post_list = $frontPage.length <= 0 ? getPosts() : $frontPage;
 
+
 </script>
+
 
 <Drawer position="top" width="w-full" height="h-fit" zIndex="z-[1]" class="top-14" bgDrawer="variant-filled-surface">
     <div class="flex justify-center gap-10 p-4">
@@ -90,7 +109,17 @@
     <Loading_Icon></Loading_Icon>
 {:then posts}
     {#each posts as post, i}
-        <Post {post}></Post>
+        <Post {post}>
+            <div slot="header">
+                <div class="text-sm"><a href="r/{post.subreddit}?id={post.id}">r/{post.subreddit}</a></div>
+                <h3 class="text-lg">{@html decodeHTML(post.title)}</h3>
+            </div>
+            <div slot="footer">
+                {#if post.num_comments > 0}
+                    <a href="./comments?id={post.id}">{post.num_comments} Comments</a>
+                {/if}
+            </div>
+        </Post>
         <!--Intersection observer to load more posts as the user scrolls-->
         {#if i == Math.floor(post_list.length * .75)}
             <span use:watchScroll></span>

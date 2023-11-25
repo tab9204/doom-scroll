@@ -25,4 +25,10 @@ sort.subscribe((val) => {
   if (browser) return (localStorage.setItem("sort", val))
 })
 
+
 export const pageScroll = writable(null);
+
+//Subreddit page specific stores
+export const subPosts = writable([]);
+export const subAfter = writable(null);
+export const subPageScroll = writable(null);

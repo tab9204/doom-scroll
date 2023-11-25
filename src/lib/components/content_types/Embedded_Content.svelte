@@ -10,12 +10,20 @@
         const loaded = ()=>{
             embed.style.opacity = "1";
             placeholder.style.opacity = "0";
-            observer.unobserve(wrapper);
+           // observer.unobserve(wrapper);
         }
         let observer = new IntersectionObserver((entries)=>{
-            if (entries[0].isIntersecting) {
+            if (entries[0].isIntersecting && embed.src == "") {
                 embed.src = url;
                 embed.addEventListener('load', loaded); 
+            }
+            else if (!entries[0].isIntersecting && embed.src != ""){
+                try{
+                    embed.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
+                }
+                catch(e){
+                    console.log(e)
+                }
             }
         }, options);
         observer.observe(wrapper);

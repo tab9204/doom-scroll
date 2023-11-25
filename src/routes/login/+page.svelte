@@ -9,6 +9,6 @@
 </script>
 
 <div class="text-center">
-    <h1 class="text-2xl mb-5">Welcome to RedditKit</h1>
-    <a class="text-tertiary-500" href="{authorizeURL}" target="_top">Sign in with your Reddit account</a>
+    <h1 class="text-2xl mb-5">Doomscroll Reddit</h1>
+    <a href="{authorizeURL}" target="_self">Sign in with your Reddit account</a>
 </div>

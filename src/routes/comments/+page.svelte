@@ -1,23 +1,21 @@
 <script>
+    import {decodeHTML} from "$lib/utilities.js";
     import {error} from '@sveltejs/kit';
-    import {page} from '$app/stores'
-    import {onMount} from "svelte";
-    import {pageScroll} from "$lib/stores.js";
+    import {page} from '$app/stores';
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
     import Comment from "$lib/components/Comment.svelte";
+    import Post from "$lib/components/Post.svelte";
 
 
     const post_id = $page.url.searchParams.get('id');
     
-    //save this post as the spot to scroll to
-    onMount(()=>{
-        pageScroll.set(post_id);
-    })
-
     const getComments = async(id)=>{
         const resp = await fetch("/api/get_post_comments",{
             method: 'POST',
-            body: JSON.stringify({id}),
+            body: JSON.stringify({
+                id:id,
+                screen: {width: window.innerWidth, height: window.innerHeight > 384 ? 384 : window.innerHeight}
+            }),
             headers: {'content-type': 'application/json'}
         });
         const data = await resp.json();
@@ -30,15 +28,20 @@
         }
 
     }
-    let comments = getComments(post_id);
+    let post = getComments(post_id);
 
 </script>
 
-{#await comments}
+{#await post}
 	<Loading_Icon></Loading_Icon>
-{:then comments}
-	{#each comments as comment}
-        <div class="variant-soft-surface m-2 p-1">
+{:then post}
+    <Post post={post[0]} forceExpand={true}>
+        <div slot="header">
+            <h3 class="text-lg">{@html decodeHTML(post[0].title)}</h3>
+        </div>
+    </Post>
+    {#each post[1] as comment}
+        <div class="variant-soft-surface rounded p-1 my-2">
             <Comment user={comment[0]} text={comment[1]} replies={comment[2]}></Comment>
         </div>
     {/each}
