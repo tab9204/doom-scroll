@@ -11,7 +11,7 @@ module.exports = {
 		)
 	],
 	theme: {
-		extend: {},
+		extend: {}
 	},
 	plugins: [
 		// 3. Append the Skeleton plugin to the end of this list

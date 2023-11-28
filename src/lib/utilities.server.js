@@ -10,12 +10,13 @@ export const extract_image_data = (post,width,height)=>{
             try{
                 
                 /*
-                const media_id = metadata[media]["id"];
-                const file_type = metadata[media]?.["m"].substring(metadata[media]["m"].indexOf("/") + 1);
-                const media_url = `https://i.redd.it/${media_id}.${file_type}`;
                 const x = metadata[media]["s"]["x"];
                 const y = metadata[media]["s"]["y"];
                 images.push({src:media_url,width:x,height:y});*/
+
+                const media_id = metadata[media]["id"];
+                const file_type = metadata[media]?.["m"].substring(metadata[media]["m"].indexOf("/") + 1);
+                const full_image = `https://i.redd.it/${media_id}.${file_type}`;
 
                 let imageData = {url: null,w: 0, h: 0, s: Number.MAX_SAFE_INTEGER};
 
@@ -27,7 +28,7 @@ export const extract_image_data = (post,width,height)=>{
                     //take out the amp; from the url
                     //if left in the url gets mangled when its added to the html
                     const cleanURL = imageData.url.replace(/amp;/g, "");
-                    images.push({src:cleanURL,width:imageData.w,height:imageData.h});
+                    images.push({src:cleanURL,big:full_image,width:imageData.w,height:imageData.h});
                 }
 
             }
@@ -41,7 +42,7 @@ export const extract_image_data = (post,width,height)=>{
     //only 1 image in the post
     else if(post.data?.preview && post.data?.preview?.images[0]?.resolutions.length >= 1){
         //check if the post url contains an image file extension 
-        const imageTypes = [".jpg", ".png", ".gif", ".svg"];
+        const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".svg"];
         const isImage = imageTypes.some(type => post.data.url.includes(type));
         if(isImage){
             let imageData = {url: null,w: 0, h: 0, s: Number.MAX_SAFE_INTEGER};
@@ -55,7 +56,7 @@ export const extract_image_data = (post,width,height)=>{
                 //take out the amp; from the url
                 //if left in the url gets mangled when its added to the html
                 const cleanURL = imageData.url.replace(/amp;/g, "");
-                images.push({src:cleanURL,width:imageData.w,height:imageData.h});
+                images.push({src:cleanURL,big:post.data.url,width:imageData.w,height:imageData.h});
             }
         }
 

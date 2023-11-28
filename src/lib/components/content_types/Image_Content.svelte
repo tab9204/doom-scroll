@@ -69,7 +69,7 @@
         });
 
         const expand = ()=>{
-            window.open(images[selected].src, "_blank");
+            window.open(images[selected].big, "_blank");
         }
 
         manager.on("tap",expand);
@@ -105,7 +105,7 @@
         }
 
         const expand = ()=>{
-            window.open(images[selected].src, "_blank");
+            window.open(images[selected].big, "_blank");
         }
 
         manager.on("swipeleft", next);

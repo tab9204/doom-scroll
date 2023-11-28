@@ -15,7 +15,7 @@
     <div class="mb-4">
         <slot name="header"/>
     </div>
-    <div class="variant-filled-secondary rounded p-2 overflow-hidden relative empty:hidden">
+    <div class="variant-filled-surface rounded p-2 overflow-hidden relative empty:hidden">
         {#if post.post_type == "image" && post.images.length > 0}
             <Image_Content images={post.images}></Image_Content>
         {:else if post.post_type == "link"}

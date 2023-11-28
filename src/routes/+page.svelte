@@ -30,7 +30,7 @@
     });
 
     onMount(()=>{
-        //set the subreddit post array and the subreddit scroll position to their default value 
+        //set the subreddit post array and scroll position to their default value 
         subPosts.set([]);
         subPageScroll.set(null);
     })
