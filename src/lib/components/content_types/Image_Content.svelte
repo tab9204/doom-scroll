@@ -150,7 +150,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <svg class="hidden md:block absolute top-2/4 -translate-y-2/4 left-full -translate-x-full bg-tertiary-500/50 ml-[8px] rounded z-[1]" xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M521.334-480.667 328-674l47.333-47.333L616-480.667 375.333-240 328-287.333l193.334-193.334Z"/></svg>
         </div>
-        <div class="absolute bottom-0 right-0 bg-secondary-500/80 py-[1px] px-[4px]">{selected + 1}/{images.length}</div>
+        <div class="absolute bottom-0 right-0 bg-surface-500/80 py-[1px] px-[4px]">{selected + 1}/{images.length}</div>
     </div>
 {:else}
     <!-- svelte-ignore a11y-img-redundant-alt -->

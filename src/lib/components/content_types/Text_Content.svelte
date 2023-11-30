@@ -33,7 +33,7 @@
     </div>
     {#if overflowing}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div on:click={expandCollapse} class="absolute bottom-0 left-2/4 -translate-x-2/4 rounded w-full bg-tertiary-500/50 flex justify-center">
+        <div on:click={expandCollapse} class="absolute bottom-0 left-2/4 -translate-x-2/4 rounded w-full bg-secondary-300/50 flex justify-center">
             <svg class="transition-all ease-linear delay-0 {!collapsed ? "rotate-180" : "rotate-0"}" xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M480-345 240-585l47.333-47.333L480-438.999l192.667-192.667L720-584.333 480-345Z"/></svg>
         </div>
     {/if}

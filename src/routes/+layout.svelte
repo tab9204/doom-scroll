@@ -11,7 +11,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <AppShell regionPage="relative hide-scrollbar" slotPageHeader="fixed w-full top-0 z-10" slotPageContent="mt-[56px]">
 	<svelte:fragment slot="pageHeader">
-		<AppBar background="bg-primary-500" shadow="drop-shadow-lg" padding="p-2" class="z-50 min-h-[56px]">	
+		<AppBar background="bg-surface-400" shadow="drop-shadow-lg" padding="p-2" class="z-50 min-h-[56px]">	
 			{#if $page.url.pathname == "/"}
 				<div on:click={()=>{
 					if($drawerStore.open){
