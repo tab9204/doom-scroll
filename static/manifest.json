@@ -15,8 +15,8 @@
         "purpose": "any"
       }
     ],
-    "background_color": "#0FBA81",
-    "theme_color": "#0FBA81",
+    "background_color": "#808cb1",
+    "theme_color": "#808cb1",
     "start_url": "/",
     "display": "standalone",
     "orientation": "portrait"

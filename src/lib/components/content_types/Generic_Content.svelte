@@ -7,13 +7,12 @@
     export let post;
 </script>
 
-<!--Video and embedded content is mutually exclusive-->
 {#if post.embed}
     <Embedded_Content content={post.embed}></Embedded_Content>
 {:else if post.video}
     <Video_Content video={post.video}></Video_Content>
 {:else if post.images.length > 0}
     <Image_Content images={post.images}></Image_Content>
-{:else if post.link}
+{:else if !post.text}
     <Link_Content link={post.link}></Link_Content>
 {/if}
