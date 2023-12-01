@@ -42,7 +42,7 @@ export const extract_image_data = (post,width,height)=>{
     //only 1 image in the post
     else if(post.data?.preview && post.data?.preview?.images[0]?.resolutions.length >= 1){
         //check if the post url contains an image file extension 
-        const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".svg"];
+        const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".gifv", ".svg"];
         const isImage = imageTypes.some(type => post.data.url.includes(type));
         if(isImage){
             let imageData = {url: null,w: 0, h: 0, s: Number.MAX_SAFE_INTEGER};

@@ -20,7 +20,7 @@
     afterNavigate((nav)=>{
         //restore the users scroll position
         if($subPageScroll){
-            document.getElementById($subPageScroll).scrollIntoView();
+            document.getElementById($subPageScroll).scrollIntoView({block:"end"});
         }
     });
 

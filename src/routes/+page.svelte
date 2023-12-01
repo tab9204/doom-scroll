@@ -8,6 +8,7 @@
     import Post from "$lib/components/Post.svelte";
     import Loading_Icon from "$lib/components/Loading_Icon.svelte";
 
+
     beforeNavigate((nav)=>{
         if(nav.to?.route.id == "/comments" || nav.to?.route.id == "/r/[slug]"){
             //save the scroll position 
@@ -18,7 +19,7 @@
     afterNavigate((nav)=>{
         //restore the users scroll position
         if($pageScroll){
-            document.getElementById($pageScroll).scrollIntoView();
+            document.getElementById($pageScroll).scrollIntoView({block:"end"});
         }
     });
 
@@ -33,6 +34,10 @@
         //set the subreddit post array and scroll position to their default value 
         subPosts.set([]);
         subPageScroll.set(null);
+
+        document.getElementById("page").addEventListener("scroll",(e)=>{
+            console.log(e.currentTarget.scrollTop)
+        })
     })
 
     //get_user_posts
@@ -57,15 +62,15 @@
         }
         else{
             console.log(data);
-            frontPage.set($frontPage.concat(data.posts))
+            frontPage.set($frontPage.concat(data.posts));
             return $frontPage;
         }
     }
 
 
-    const watchScroll = (node)=>{
+    const watchScroll =  (node)=>{
         let options = {root: null,rootMargin: "0px",threshold: 0}
-        let observer = new IntersectionObserver((entries)=>{
+        let observer = new IntersectionObserver(async (entries)=>{
             if (entries[0].isIntersecting && !node.classList.contains("seen")) {
                 node.classList.add("seen"); 
                 //add the last batch of post ids to seen array
@@ -75,6 +80,7 @@
                 seen.set($seen.concat(viewed));
                 //load more posts
                 getPosts();
+                
             }
         }, options);
         observer.observe(node);
@@ -122,10 +128,9 @@
         </Post>
         <!--Intersection observer to load more posts as the user scrolls-->
         {#if i == Math.floor(post_list.length * .75)}
-            <span use:watchScroll></span>
+           <span use:watchScroll></span>
         {/if}
     {/each}
-    <!--<span use:watchScroll></span>-->
 {:catch error}
     <p>Could not load posts</p>
 {/await}
