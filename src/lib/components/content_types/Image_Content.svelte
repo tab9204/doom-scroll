@@ -147,7 +147,7 @@
                     <div class="image-in-gallery left-2/4 -translate-x-2/4 relative max-w-full max-h-96" style="width:{galleryWidth}px; height:{galleryHeight}px;" use:lazyLoadImage={image.src}>
                         <Placeholder width={image.width} height={image.height}></Placeholder>
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <img class="relative left-2/4 -translate-x-2/4 max-w-full max-h-96 opacity-0 object-contain ease-linear duration-700" alt="The content of an image post" style="width:{image.width}px; height:{image.height}px;">
+                        <img class="relative left-2/4 -translate-x-2/4 top-2/4 -translate-y-2/4 max-w-full max-h-96 opacity-0 object-contain ease-linear duration-700" alt="The content of an image post" style="width:{image.width}px; height:{image.height}px;">
                     </div>
                 {/if}
             {/each}

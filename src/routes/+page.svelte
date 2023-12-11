@@ -19,7 +19,7 @@
     afterNavigate((nav)=>{
         //restore the users scroll position
         if($pageScroll){
-            document.getElementById($pageScroll).scrollIntoView({block:"end"});
+            document.getElementById($pageScroll).scrollIntoView({block:"center"});
         }
     });
 
@@ -34,10 +34,6 @@
         //set the subreddit post array and scroll position to their default value 
         subPosts.set([]);
         subPageScroll.set(null);
-
-        document.getElementById("page").addEventListener("scroll",(e)=>{
-            console.log(e.currentTarget.scrollTop)
-        })
     })
 
     //get_user_posts

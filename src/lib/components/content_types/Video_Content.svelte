@@ -6,7 +6,7 @@
 
     const videoId = "vid" + Math.floor(Math.random() * Date.now()).toString();
 
-    let options = {root: null,rootMargin: "0px",threshold: 0};
+    let options = {root: null,rootMargin: "-56px 0px 0px 0px",threshold: 0};
 
     let player = null;
 
