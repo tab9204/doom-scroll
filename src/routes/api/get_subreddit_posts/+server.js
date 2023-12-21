@@ -5,9 +5,11 @@ import {extract_image_data, extract_video_data, extract_embed_data} from "$lib/u
 export const POST = async ({request})=>{
     const req = await request.json();
     try{
-        const resp = await fetch(`https://www.reddit.com/r/${req.subreddit}/hot.json?limit=5&after=${req.after}`,{method: 'GET'});
+        const resp = await fetch(`https://oauth.reddit.com/r/${req.subreddit}/hot.json?limit=5&after=${req.after}`,{method: 'GET'});
 
         const posts = await resp.json();
+
+        console.log(posts);
 
         let data = {
             after: posts.data.after,
