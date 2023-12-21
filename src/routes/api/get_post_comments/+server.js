@@ -28,7 +28,7 @@ export const POST = async ({request,cookies})=>{
             link: content.data.url,
             text: content.data?.selftext_html ? content.data.selftext_html : false,
             video: content.data?.secure_media?.reddit_video ? extract_video_data(content.data.secure_media.reddit_video) : false,
-            embed: content.data?.secure_media_embed?.media_domain_url ? extract_embed_data(content.data.secure_media_embed) : false,
+            embed: content.data?.secure_media_embed?.media_domain_url ? extract_embed_data(content.data.secure_media_embed, content.data.url) : false,
         },
         //post comment array
         []

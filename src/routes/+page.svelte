@@ -59,6 +59,7 @@
         else{
             console.log(data);
             frontPage.set($frontPage.concat(data.posts));
+           // console.log([...$frontPage, ...data.posts]);
             return $frontPage;
         }
     }

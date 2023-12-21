@@ -15,6 +15,7 @@
         <slot name="header"/>
     </div>
     <div class="variant-filled-surface rounded p-2 overflow-hidden relative empty:hidden">
+        <!--can't currently display twitch embeds so skip for now-->
         {#if post.embed}
             <Embedded_Content content={post.embed}></Embedded_Content>
         {:else if post.video}
@@ -22,7 +23,7 @@
         {:else if post.images.length > 0}
             <Image_Content images={post.images}></Image_Content>
         <!--only show the link if there is no text and the link is not to the post itself-->
-        {:else if !post.text && !post.link.includes("www.reddit.com") && !post.link.includes("/comments/")}
+        {:else if !post.text && (!post.link.includes("www.reddit.com") && !post.link.includes("/comments/"))}
             <Link_Content link={post.link}></Link_Content>
         {/if}
         {#if post.text}

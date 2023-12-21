@@ -23,7 +23,7 @@ export const POST = async ({request,cookies})=>{
                 link: post.data.url,
                 text: post.data?.selftext_html ? post.data.selftext_html : false,
                 video: post.data?.secure_media?.reddit_video ? extract_video_data(post.data.secure_media.reddit_video) : false,
-                embed: post.data?.secure_media_embed?.media_domain_url ? extract_embed_data(post.data.secure_media_embed) : false,
+                embed: post.data?.secure_media_embed?.media_domain_url ? extract_embed_data(post.data.secure_media_embed, post.data.url) : false,
                 nsfw: post.data.over_18,
                 num_comments: post?.data.num_comments ? post.data.num_comments : 0
             }

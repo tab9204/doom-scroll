@@ -28,7 +28,12 @@ export const extract_image_data = (post,width,height)=>{
                     //take out the amp; from the url
                     //if left in the url gets mangled when its added to the html
                     const cleanURL = imageData.url.replace(/amp;/g, "");
-                    images.push({src:cleanURL,big:full_image,width:imageData.w,height:imageData.h});
+                    images.push({
+                        src: post.data.url.includes(".gif") ? post.data.url : cleanURL,
+                        big:full_image,
+                        width:imageData.w,
+                        height:imageData.h
+                    });
                 }
 
             }
@@ -41,8 +46,12 @@ export const extract_image_data = (post,width,height)=>{
     }
     //only 1 image in the post
     else if(post.data?.preview && post.data?.preview?.images[0]?.resolutions.length >= 1){
+        //gifv files cannot be embedded as an image so skip it
+        if(post.data.url.includes(".gifv")){
+            return []
+        }
         //check if the post url contains an image file extension 
-        const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".gifv", ".svg"];
+        const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".svg"];
         const isImage = imageTypes.some(type => post.data.url.includes(type));
         if(isImage){
             let imageData = {url: null,w: 0, h: 0, s: Number.MAX_SAFE_INTEGER};
@@ -56,7 +65,13 @@ export const extract_image_data = (post,width,height)=>{
                 //take out the amp; from the url
                 //if left in the url gets mangled when its added to the html
                 const cleanURL = imageData.url.replace(/amp;/g, "");
-                images.push({src:cleanURL,big:post.data.url,width:imageData.w,height:imageData.h});
+                images.push({
+                    //the preview images for gifs and gifvs are pngs so use the main post url as the image src 
+                    src:post.data.url.includes(".gif") ? post.data.url : cleanURL,
+                    big:post.data.url,
+                    width:imageData.w,
+                    height:imageData.h
+                });
             }
         }
 
@@ -95,7 +110,11 @@ export const extract_video_data = (video)=>{
     return data;
 }
 
-export const extract_embed_data = (embed)=>{
+export const extract_embed_data = (embed,post_url)=>{
+    //cannot currently embed twitch clips so do not return the embed data
+    if(post_url.includes("twitch.tv")){
+        return false;
+    }
     const url = embed.media_domain_url;
     const width = embed.width;
     const height = embed.height;
