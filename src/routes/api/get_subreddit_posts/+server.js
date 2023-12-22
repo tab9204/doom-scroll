@@ -2,14 +2,18 @@ import {error} from '@sveltejs/kit';
 import {json} from '@sveltejs/kit';
 import {extract_image_data, extract_video_data, extract_embed_data} from "$lib/utilities.server.js";
 
-export const POST = async ({request})=>{
+export const POST = async ({request,cookies})=>{
     const req = await request.json();
+    const token = cookies.get('token');
     try{
-        const resp = await fetch(`https://oauth.reddit.com/r/${req.subreddit}/hot.json?limit=5&after=${req.after}`,{method: 'GET'});
+        const resp = await fetch(`https://oauth.reddit.com/r/${req.subreddit}/hot?limit=5&after=${req.after}`,{
+            method: 'GET',
+            headers: new Headers({
+                "Authorization": `bearer ${token}`,
+            })
+        });
 
         const posts = await resp.json();
-
-        console.log(posts);
 
         let data = {
             after: posts.data.after,
