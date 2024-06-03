@@ -23,7 +23,7 @@
         {:else if post.images.length > 0}
             <Image_Content images={post.images}></Image_Content>
         <!--only show the link if there is no text and the link is not to the post itself-->
-        {:else if !post.text && (!post.link.includes("www.reddit.com") && !post.link.includes("/comments/"))}
+        {:else if !post.text && (!post.link.includes("/"+post.id+"/") && !post.link.includes("/comments/"))}
             <Link_Content link={post.link}></Link_Content>
         {/if}
         {#if post.text}

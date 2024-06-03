@@ -25,11 +25,11 @@ export const POST = async ({request,cookies})=>{
                 id: post.data.id,
                 title: post.data.title,
                 post_type: post.data?.post_hint ? post.data.post_hint : false,
-                images: post.data?.media_metadata || post.data?.preview ? extract_image_data(post,req.screen.width,req.screen.height) : [],
                 link: post.data.url,
                 text: post.data?.selftext_html ? post.data.selftext_html : false,
-                video: post.data?.secure_media?.reddit_video ? extract_video_data(post.data.secure_media.reddit_video) : false,
-                embed: post.data?.secure_media_embed?.media_domain_url ? extract_embed_data(post.data.secure_media_embed, post.data.url) : false,
+                images: extract_image_data(post,req.screen.width,req.screen.height),
+                video: extract_video_data(post),
+                embed: extract_embed_data(post),
                 nsfw: post.data.over_18,
                 num_comments: post?.data.num_comments ? post.data.num_comments : 0
             }

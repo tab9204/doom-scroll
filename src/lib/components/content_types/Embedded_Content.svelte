@@ -41,6 +41,7 @@
     }
 </script>
 
+
 <!-- svelte-ignore a11y-img-redundant-alt -->
 <div class="relative max-w-full max-h-96" use:lazyLoadEmbed={content.url}>
     <Placeholder width={content.width} height={content.height}></Placeholder>

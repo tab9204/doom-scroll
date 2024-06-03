@@ -17,7 +17,7 @@ export const handle = async ({event,resolve}) =>{
             if(!event.cookies.get('token')){
                 const token = await get_new_token(refresh,CLIENT_ID,CLIENT_SECRET);
                 console.log("New token");
-                //store the token as a cookie. maxAge is when the token would expire 
+                //store the token as a cookie 
                 event.cookies.set('token', token, {secure:cookieSecure[environment], path: '/', maxAge:  3600});
             }
         }

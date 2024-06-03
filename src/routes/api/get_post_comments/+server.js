@@ -24,11 +24,11 @@ export const POST = async ({request,cookies})=>{
         {
             title: content.data.title,
             post_type: content.data?.post_hint ? content.data.post_hint : false,
-            images: content.data?.media_metadata || content.data?.preview ? extract_image_data(content,req.screen.width,req.screen.height) : [],
             link: content.data.url,
             text: content.data?.selftext_html ? content.data.selftext_html : false,
-            video: content.data?.secure_media?.reddit_video ? extract_video_data(content.data.secure_media.reddit_video) : false,
-            embed: content.data?.secure_media_embed?.media_domain_url ? extract_embed_data(content.data.secure_media_embed, content.data.url) : false,
+            images: extract_image_data(content,req.screen.width,req.screen.height),
+            video: extract_video_data(content),
+            embed: extract_embed_data(content)
         },
         //post comment array
         []
@@ -48,7 +48,8 @@ export const POST = async ({request,cookies})=>{
 
 //builds a comment chain array to return to the client 
 const extract_comments = (comment,array)=>{
-    array.push([comment.data.author,comment.data.body_html,[]]);
+    //comment.data.is_submitter => OP
+    array.push([comment.data.author,comment.data.body_html, [], comment.data?.is_submitter ? comment.data.is_submitter : false]);
     if(comment.data.replies != "" && comment.data?.replies?.data?.children.length >= 1){
         comment.data.replies.data.children.forEach((reply)=>{
             extract_comments(reply,array[array.length-1][2])

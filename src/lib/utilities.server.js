@@ -1,19 +1,15 @@
+import {environment, twitchParent} from "$lib/config.server.js";
 //post => reddit post data
 //width => width of the client screen
 //height => height of the client screen
 export const extract_image_data = (post,width,height)=>{
-    let images = [];
+    let images = []; 
     //metadata means the post contains a gallery of images
     if(post.data?.media_metadata){
         const metadata = post.data.media_metadata;
         for (const media in metadata) {
             try{
                 
-                /*
-                const x = metadata[media]["s"]["x"];
-                const y = metadata[media]["s"]["y"];
-                images.push({src:media_url,width:x,height:y});*/
-
                 const media_id = metadata[media]["id"];
                 const file_type = metadata[media]?.["m"].substring(metadata[media]["m"].indexOf("/") + 1);
                 const full_image = `https://i.redd.it/${media_id}.${file_type}`;
@@ -23,7 +19,7 @@ export const extract_image_data = (post,width,height)=>{
                 metadata[media].p.forEach((image)=>{
                     imageData = closestSize(image.x,image.y,image.u,width,height,imageData);
                 });
-                if(imageData.url != null){
+                if(imageData.url){
                     //https://preview.redd.it/afhemm1k98qb1.jpg?width=320&crop=smart&auto=webp&s=f3d080c800be8d03a99b74d2ea39deafb5d54015
                     //take out the amp; from the url
                     //if left in the url gets mangled when its added to the html
@@ -46,13 +42,10 @@ export const extract_image_data = (post,width,height)=>{
     }
     //only 1 image in the post
     else if(post.data?.preview && post.data?.preview?.images[0]?.resolutions.length >= 1){
-        //gifv files cannot be embedded as an image so skip it
-        if(post.data.url.includes(".gifv")){
-            return []
-        }
         //check if the post url contains an image file extension 
+        //at the moment these are the only types of images we want to display
         const imageTypes = [".jpg", ".jpeg", ".png", ".gif", ".svg"];
-        const isImage = imageTypes.some(type => post.data.url.includes(type));
+        const isImage = imageTypes.some(type => post.data.url.match(new RegExp(`\\${type}\\b`,"i")));
         if(isImage){
             let imageData = {url: null,w: 0, h: 0, s: Number.MAX_SAFE_INTEGER};
             post.data.preview.images[0].resolutions.forEach(image =>{
@@ -60,7 +53,7 @@ export const extract_image_data = (post,width,height)=>{
                     imageData = closestSize(image.width,image.height,image.url,width,height,imageData);
                 }
             })
-            if(imageData.url != null){
+            if(imageData.url){
                 //https://preview.redd.it/afhemm1k98qb1.jpg?width=320&crop=smart&auto=webp&s=f3d080c800be8d03a99b74d2ea39deafb5d54015
                 //take out the amp; from the url
                 //if left in the url gets mangled when its added to the html
@@ -94,7 +87,16 @@ const closestSize = (imageW, imageH, imageURL, screenW, screenH, returnData)=>{
     return returnData;
 }
 
-export const extract_video_data = (video)=>{
+export const extract_video_data = (post)=>{
+    //video data could be in different places depending on if it is an mp4 or a gifv
+    //reddit_video_preview => gifv
+    //reddit_video => mp4
+    const video = post.data?.preview?.reddit_video_preview ? post.data.preview.reddit_video_preview : post.data?.secure_media?.reddit_video;
+
+    if(!video){
+        return false;
+    }
+
     const url = video.fallback_url;
     const height = video.height;
     const width = video.width;
@@ -110,11 +112,27 @@ export const extract_video_data = (video)=>{
     return data;
 }
 
-export const extract_embed_data = (embed,post_url)=>{
-    //cannot currently embed twitch clips so do not return the embed data
-    if(post_url.includes("twitch.tv")){
+export const extract_embed_data = (post)=>{
+    //the twitch.tv content url returned by reddit only works on reddit
+    //so we must build site specific urls for twitch clips and vods 
+    if(post.data.url.includes("twitch.tv")){
+        //twitch clip
+        //only showing twitch clips but could also show vods and livestream embeds 
+        if(post.data.url.match(new RegExp(`\\https://clips.twitch.tv/\\b`,"i"))){
+            const clipID = post.data.url.split("https://clips.twitch.tv/")[1];
+            //overwrite the reddit url with our custom one
+            post.data.secure_media_embed.media_domain_url = `https://clips.twitch.tv/embed?clip=${clipID}&parent=${twitchParent[environment]}`
+        }
+        else{
+            return false;
+        }
+    }
+    else if(!post.data?.secure_media_embed?.media_domain_url){
         return false;
     }
+
+    const embed = post.data.secure_media_embed;
+
     const url = embed.media_domain_url;
     const width = embed.width;
     const height = embed.height;
